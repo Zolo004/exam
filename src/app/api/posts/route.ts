@@ -5,27 +5,31 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 // GET /api/posts - Fetch all posts (add filtering/searching later)
 export async function GET(request: Request) {
-  // TODO: Add search, filter, pagination logic based on URL query params
-  // const { searchParams } = new URL(request.url);
-  // const category = searchParams.get('category');
-  // const searchTerm = searchParams.get('search');
-
+  const { searchParams } = new URL(request.url);
+  const category = searchParams.get('category');
+  const searchTerm = searchParams.get('search');
+  
   try {
     const posts = await prisma.post.findMany({
+      where: {
+        AND: [
+          category ? { category: { name: { contains: category, mode: 'insensitive' } } } : {},
+          searchTerm ? { title: { contains: searchTerm, mode: 'insensitive' } } : {},
+        ],
+      },
       include: {
-        author: { select: { name: true, email: true } }, // Select author fields
-        category: { select: { name: true } }, // Select category name
-        _count: { select: { likes: true, comments: true } } // Count likes and comments
+        author: { select: { name: true, email: true } },
+        category: { select: { name: true } },
+        _count: { select: { likes: true, comments: true } },
       },
       orderBy: {
         createdAt: 'desc',
       },
-      // where: { ... filtering logic ...}
     });
+
     return NextResponse.json(posts);
   } catch (error) {
-    // console.error("Failed to fetch posts:", error);
-    return new NextResponse('Failed to fetch posts', { status: 500 });
+    return new NextResponse('Post-уудыг авахад алдаа гарлаа', { status: 500 });
   }
 }
 
