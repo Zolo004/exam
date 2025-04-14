@@ -43,8 +43,8 @@ export default function RegisterPage() {
 
         if (signInResult?.error) {
           setError(`Registration ok, but login failed. Please login manually.`);
-          setSuccess(null); 
-          router.push('/login'); // Redirect to login if auto-login fails
+          setSuccess(null);
+          router.push('/login');
         } else if (signInResult?.ok) {
           router.push('/');
           router.refresh();
@@ -58,26 +58,26 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-8 text-center text-gray-800">Create Account</h2>
+    <div className="min-h-screen flex items-center justify-center px-4 ml-60" style={{ backgroundColor: '#0a0a0a' }}>
+      <div className="bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md transition-all duration-300">
+        <h2 className="text-3xl font-bold mb-8 text-center text-white">Create Account</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="bg-red-50 border border-red-300 text-red-600 px-4 py-3 rounded text-sm" role="alert">
+            <div className="bg-red-500/10 border border-red-400 text-red-300 px-4 py-3 rounded text-sm" role="alert">
               {error}
             </div>
           )}
           {success && (
-            <div className="bg-green-50 border border-green-300 text-green-700 px-4 py-3 rounded text-sm" role="alert">
+            <div className="bg-green-500/10 border border-green-400 text-green-300 px-4 py-3 rounded text-sm" role="alert">
               {success}
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="name">
+            <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="name">
               Full Name (Optional)
             </label>
             <input
-              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+              className="block w-full px-4 py-2 border border-gray-600 rounded-md bg-gray-900 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-300"
               id="name"
               type="text"
               autoComplete="name"
@@ -88,11 +88,11 @@ export default function RegisterPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="email">
+            <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="email">
               Email Address
             </label>
             <input
-              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+              className="block w-full px-4 py-2 border border-gray-600 rounded-md bg-gray-900 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-300"
               id="email"
               type="email"
               autoComplete="email"
@@ -104,11 +104,11 @@ export default function RegisterPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="password">
+            <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="password">
               Password
             </label>
             <input
-              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+              className="block w-full px-4 py-2 border border-gray-600 rounded-md bg-gray-900 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-300"
               id="password"
               type="password"
               autoComplete="new-password"
@@ -119,24 +119,29 @@ export default function RegisterPage() {
               disabled={loading}
             />
           </div>
-          
+
           <div>
             <button
               type="submit"
               disabled={loading}
-              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                loading ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
             >
               {loading ? 'Creating Account...' : 'Create Account'}
             </button>
           </div>
-          <div className="text-sm text-center">
-             <span className="text-gray-600">Already have an account? </span>
-            <Link href="/login" className="font-medium text-primary-600 hover:text-primary-500">
-                Login here
+          <div className="text-sm text-center text-gray-400">
+            Already have an account?{' '}
+            <Link
+              href="/login"
+              className="font-medium text-indigo-400 hover:text-indigo-300 transition duration-300 underline underline-offset-2"
+            >
+              Login here
             </Link>
           </div>
         </form>
       </div>
     </div>
   );
-} 
+}

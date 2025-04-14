@@ -1,82 +1,83 @@
 'use client';
-import { FiUser } from 'react-icons/fi';
-
-import Link from 'next/link';
+import { FiUser, FiLogIn, FiLogOut, FiUserPlus, FiPlusCircle } from 'react-icons/fi';
 import { useSession, signOut } from 'next-auth/react';
-import { FiLogIn, FiLogOut, FiUserPlus, FiPlusCircle } from 'react-icons/fi'; // Icons
+import Link from 'next/link';
 
-export default function Navbar() {
+export default function Sidebar() {
   const { data: session, status } = useSession();
   const isLoading = status === 'loading';
 
   return (
-    // Add bottom border, increase vertical padding (py-4)
-    <nav className="bg-white shadow-sm sticky top-0 z-50 border-b border-gray-200">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Adjust height if needed due to padding change, or remove h-16 and rely on padding */}
-          <div className="flex justify-between items-center py-3"> 
-            {/* Logo/Brand Name - Use primary color on hover */}
-            <Link href="/" className="text-xl font-semibold text-gray-800 hover:text-primary-600 transition-colors">
-              Blog App
-            </Link>
-            
-            {/* Navigation Links/Actions */}
-<div className="flex items-center space-x-3 sm:space-x-4">
-  {isLoading ? (
-    <div className="h-8 w-24 bg-gray-200 rounded animate-pulse"></div>
-  ) : session ? (
-    <>
-      {/* Use primary color for New Post button */}
-      <Link
-        href="/create-post"
-        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-black bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
-      >
-        <FiPlusCircle className="-ml-0.5 mr-1.5 h-4 w-4" /> New Post
-      </Link>
-      
-      {/* Profile Link */}
-      <Link
-        href="/profile"
-        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-black bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
-      >
-        <FiPlusCircle className="-ml-0.5 mr-1.5 h-4 w-4" /> profile
-      </Link>
-      
+    <div className="fixed top-0 left-0 h-full w-64 bg-[#1e293b]/80 backdrop-blur-md text-white shadow-lg z-50 border-r border-gray-700">
+      <div className="flex flex-col h-full justify-between">
+        {/* Logo */}
+        <div className="py-6 px-6 text-3xl font-extrabold tracking-wide">
+          <Link
+            href="/"
+            className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent hover:from-indigo-300 hover:to-pink-300 transition-all duration-300"
+          >
+            Larva
+          </Link>
+        </div>
 
-      <span className="hidden sm:inline text-sm font-medium text-gray-700">
-        {session.user?.name || session.user?.email}
-      </span>
-      
-      {/* Logout button */}
-      <button
-        onClick={() => signOut({ callbackUrl: '/' })}
-        className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
-      >
-        <FiLogOut className="-ml-0.5 mr-1.5 h-4 w-4" /> Logout
-      </button>
-    </>
-  ) : (
-    <>
-      <Link
-        href="/login"
-        className="inline-flex items-center px-3 py-2 border border-black-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
-      >
-        <FiLogIn className="-ml-0.5 mr-1.5 h-4 w-4" /> Login
-      </Link>
-      
-      {/* Use primary color for Register button */}
-      <Link 
-        href="/register" 
-        className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-primary-100 hover:bg-primary-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors"
-      >
-        <FiUserPlus className="-ml-0.5 mr-1.5 h-4 w-4" /> Register
-      </Link>
-    </>
-  )}
-</div>
+        {/* Navigation */}
+        <div className="flex flex-col space-y-4 px-6">
+          {isLoading ? (
+            <div className="h-8 w-24 bg-gray-600 rounded animate-pulse"></div>
+          ) : session ? (
+            <>
+              <Link
+                href="/create-post"
+                className="inline-flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg bg-gray-700 hover:bg-indigo-600 hover:shadow transition-all duration-200 group"
+              >
+                <FiPlusCircle className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" /> New Post
+              </Link>
 
-          </div>
+              <Link
+                href="/profile"
+                className="inline-flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg bg-gray-700 hover:bg-purple-600 hover:shadow transition-all duration-200 group"
+              >
+                <FiUser className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" /> My Posts
+              </Link>
+
+              <div className="bg-gray-700/60 p-3 rounded-lg mt-4 text-sm text-gray-300">
+                <div className="font-semibold text-white truncate">
+                  {session.user?.name || session.user?.email}
+                </div>
+                <div className="text-xs text-gray-400">Logged in</div>
+              </div>
+
+              <button
+                onClick={() => signOut({ callbackUrl: '/' })}
+                className="inline-flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg bg-gray-700 hover:bg-red-500 hover:shadow transition-all duration-200 group mt-2"
+              >
+                <FiLogOut className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" /> Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg bg-gray-700 hover:bg-blue-600 hover:shadow transition-all duration-200 group"
+              >
+                <FiLogIn className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" /> Login
+              </Link>
+
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg bg-gray-700 hover:bg-green-600 hover:shadow transition-all duration-200 group"
+              >
+                <FiUserPlus className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" /> Register
+              </Link>
+            </>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="p-6 text-xs text-center text-gray-500 border-t border-gray-700">
+          <p>&copy; 2025 Facetbook. All rights reserved.</p>
+        </div>
       </div>
-    </nav>
+    </div>
   );
-} 
+}

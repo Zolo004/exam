@@ -15,23 +15,21 @@ interface PostFormData {
 interface PostData extends PostFormData {
     id: string;
     authorId: string;
-    // Add other fields if needed, like category object itself
     category?: { id: string; name: string };
 }
 
 export default function EditPostPage() {
   const router = useRouter();
   const params = useParams();
-  const postId = params.id as string; // Get post ID from URL
+  const postId = params.id as string;
   const { data: session, status } = useSession();
 
   const [formData, setFormData] = useState<PostFormData>({ title: '', content: '', categoryName: '', imageUrl: '' });
   const [originalPost, setOriginalPost] = useState<PostData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [fetching, setFetching] = useState(true); // State for fetching initial data
+  const [fetching, setFetching] = useState(true);
 
-  // Fetch post data on mount
   useEffect(() => {
     if (!postId) return;
 
@@ -41,35 +39,32 @@ export default function EditPostPage() {
         const res = await fetch(`/api/posts/${postId}`);
         if (!res.ok) {
           if (res.status === 404) {
-            notFound(); // Use Next.js notFound helper
+            notFound();
           } else {
             throw new Error('Failed to fetch post data');
           }
-          return; // Stop execution if not ok
+          return;
         }
         const data: PostData = await res.json();
-        
-        // Security check: Ensure logged-in user is the author
+
         if (status === 'authenticated' && session?.user?.id !== data.authorId) {
-             setError("You are not authorized to edit this post.");
-             // Optionally redirect
-             // router.push('/'); 
-             setOriginalPost(data); // Still set data to show content if desired, but disable form
-             setFormData({ 
+            setError("You are not authorized to edit this post.");
+            setOriginalPost(data);
+            setFormData({ 
                 title: data.title, 
                 content: data.content, 
-                categoryName: data.category?.name || '', // Use fetched category name
+                categoryName: data.category?.name || '', 
                 imageUrl: data.imageUrl 
             });
-             setFetching(false);
-             return;
+            setFetching(false);
+            return;
         }
 
         setOriginalPost(data);
         setFormData({ 
             title: data.title, 
             content: data.content, 
-            categoryName: data.category?.name || '', // Use fetched category name
+            categoryName: data.category?.name || '', 
             imageUrl: data.imageUrl 
         });
 
@@ -80,14 +75,12 @@ export default function EditPostPage() {
       }
     };
 
-    // Only fetch if authenticated or still loading session
     if (status !== 'unauthenticated') {
         fetchPost();
     }
 
-  }, [postId, status, session?.user?.id]); // Re-fetch if postId or session status changes
+  }, [postId, status, session?.user?.id]);
 
-  // Redirect if unauthenticated after session check
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push(`/login?callbackUrl=/posts/${postId}/edit`);
@@ -141,9 +134,8 @@ export default function EditPostPage() {
         throw new Error(errorData.message || 'Failed to update post');
       }
 
-      // Redirect back to the post detail page after successful update
       router.push(`/posts/${postId}`);
-      router.refresh(); // Important to refresh data on the detail page
+      router.refresh();
 
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
@@ -152,17 +144,16 @@ export default function EditPostPage() {
     }
   };
 
-  // Loading and Auth States
   if (fetching || status === 'loading') {
     return <div className="flex justify-center items-center h-64"><p>Loading post data...</p></div>;
   }
   if (status === 'unauthenticated') {
      return <div className="flex justify-center items-center h-64"><p>Redirecting to login...</p></div>;
   }
-   // If user is authenticated but not the author (and error is set)
+
   if (error && originalPost && session?.user?.id !== originalPost?.authorId) {
       return (
-        <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
+        <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-red-500">
             <h1 className="text-2xl font-bold mb-6 text-center text-red-600">Authorization Error</h1>
             <p className="text-center text-gray-700 bg-red-50 border border-red-300 text-red-600 px-4 py-3 rounded text-sm">{error}</p>
             <div className="mt-6 text-center">
@@ -173,10 +164,10 @@ export default function EditPostPage() {
         </div>
       );
   }
-  // Handle general fetch errors after loading/auth checks
+
   if (error) {
       return (
-          <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
+          <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-red-500">
               <h1 className="text-2xl font-bold mb-6 text-center text-red-600">Error</h1>
               <p className="text-center text-gray-700 bg-red-50 border border-red-300 text-red-600 px-4 py-3 rounded text-sm">{error}</p>
               <div className="mt-6 text-center">
@@ -187,19 +178,16 @@ export default function EditPostPage() {
           </div>
         );
   }
-  
+
   if (!originalPost) {
-      // This case should ideally be handled by notFound() triggered during fetch
       return <div className="flex justify-center items-center h-64"><p>Post not found.</p></div>;
   }
 
-
-  // Determine if form should be disabled (e.g., if user is not author)
   const isFormDisabled = loading || (status === 'authenticated' && session?.user?.id !== originalPost?.authorId);
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
-      <h1 className="text-2xl font-bold mb-8 text-center text-gray-800">Edit Post</h1>
+    <div className="max-w-2xl mx-auto bg-[#1e2939] p-8 rounded-lg shadow-lg border border-gray-300 hover:shadow-xl transition-all duration-300">
+      <h1 className="text-2xl font-bold mb-8 text-center text-white">Edit Post</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         {error && (
           <div className="bg-red-50 border border-red-300 text-red-600 px-4 py-3 rounded text-sm" role="alert">
@@ -207,61 +195,61 @@ export default function EditPostPage() {
           </div>
         )}
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="title" className="block text-sm font-medium text-gray-200 mb-1">
             Post Title
           </label>
           <input
             type="text"
             id="title"
-            name="title" // Add name attribute for handleInputChange
+            name="title"
             value={formData.title}
             onChange={handleInputChange}
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             required
             disabled={isFormDisabled}
           />
         </div>
         <div>
-          <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="content" className="block text-sm font-medium text-gray-200 mb-1">
             Content
           </label>
           <textarea
             id="content"
-            name="content" // Add name attribute
+            name="content"
             rows={10}
             value={formData.content}
             onChange={handleInputChange}
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             required
             disabled={isFormDisabled}
           />
         </div>
         <div>
-          <label htmlFor="categoryName" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="categoryName" className="block text-sm font-medium text-gray-200 mb-1">
             Category Name
           </label>
           <input
             type="text"
             id="categoryName"
-            name="categoryName" // Add name attribute
+            name="categoryName"
             value={formData.categoryName}
             onChange={handleInputChange}
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             required
             disabled={isFormDisabled}
           />
         </div>
         <div>
-          <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-200 mb-1">
             Image URL (Optional)
           </label>
           <input
             type="url" 
             id="imageUrl"
-            name="imageUrl" // Add name attribute
-            value={formData.imageUrl || ''} // Handle null value for input
+            name="imageUrl"
+            value={formData.imageUrl || ''}
             onChange={handleInputChange}
-            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
+            className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             placeholder="https://example.com/image.jpg"
             disabled={isFormDisabled}
           />
@@ -269,18 +257,14 @@ export default function EditPostPage() {
         <div>
           <button
             type="submit"
-            className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 ${isFormDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
             disabled={isFormDisabled}
           >
-            {loading ? 'Saving Changes...' : 'Save Changes'}
+            {loading ? 'Updating...' : 'Update Post'}
           </button>
-        </div>
-        <div className="text-center mt-4">
-            <Link href={`/posts/${postId}`} className="text-sm text-gray-500 hover:text-gray-700 underline">
-                Cancel
-            </Link>
         </div>
       </form>
     </div>
   );
-} 
+  
+}
